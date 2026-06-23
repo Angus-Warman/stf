@@ -84,3 +84,27 @@ func TestTimeFormatUTC(t *testing.T) {
 		})
 	}
 }
+
+func TestTimeFormatSingleCharCustom(t *testing.T) {
+	loc := mustLoadLocation("Australia/Sydney")
+	tm := time.Date(2026, 6, 3, 8, 5, 3, 0, loc)
+
+	tests := []struct {
+		format   string
+		expected string
+	}{
+		{"d/M/yy", "3/6/26"},
+		{"d/M/yyyy", "3/6/2026"},
+		{"H:m:s", "H:5:3"},
+		{"hh:m:s", "08:5:3"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.format, func(t *testing.T) {
+			got := TimeFormat(tm, tt.format)
+			if got != tt.expected {
+				t.Errorf("TimeFormat(%v, %q) = %q, want %q", tm, tt.format, got, tt.expected)
+			}
+		})
+	}
+}

@@ -21,20 +21,25 @@ var replacer = strings.NewReplacer(
 	"MMMM", "January",
 	"MMM", "Jan",
 	"MM", "01",
+	"M", "1",
 	"dddd", "Monday",
 	"ddd", "Mon",
 	"dd", "02",
+	"d", "2",
 	"HH", "15",
 	"hh", "03",
 	"h", "3",
 	"mm", "04",
+	"m", "4",
 	"ss", "05",
+	"s", "5",
 	"tt", "PM",
 	"K", "Z07:00",
 )
 
-func TimeFormat(t time.Time, format string) string {
-	goFormat := replacer.Replace(format)
+// TimeFormats converts a time value to a string, using a layout similar to "yyyy/MM/dd HH:mm:ss"
+func TimeFormat(t time.Time, layout string) string {
+	goLayout := replacer.Replace(layout)
 
-	return t.Format(goFormat)
+	return t.Format(goLayout)
 }
