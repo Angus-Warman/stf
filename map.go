@@ -44,6 +44,16 @@ func GetOrDefault[K comparable, V any](target map[K]V, key K, defaultVal V) V {
 	return defaultVal
 }
 
+func GetKey[K comparable, V comparable](target map[K]V, value V) (K, bool) {
+	for k, v := range target {
+		if v == value {
+			return k, true
+		}
+	}
+	var zero K
+	return zero, false
+}
+
 func GetOrErr[K comparable, V any](target map[K]V, key K) (V, error) {
 	value, ok := target[key]
 
