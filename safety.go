@@ -1,7 +1,9 @@
 package stf
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"path/filepath"
 	"strings"
 )
@@ -32,9 +34,13 @@ func SafeJoin(root, untrusted string) (string, error) {
 
 	resolved, err := filepath.EvalSymlinks(target)
 
-	isSymlink := err == nil
+	resolved, exists, err := resolveSymlinkIfExists(target)
 
-	if isSymlink {
+	if err != nil {
+		return "", err
+	}
+
+	if exists {
 		if isWithinRoot(resolved) {
 			return resolved, nil
 		}
@@ -48,4 +54,18 @@ func SafeJoin(root, untrusted string) (string, error) {
 
 	return "", fmt.Errorf("path traversal: %q is outside root %q", target, root)
 
+}
+
+func resolveSymlinkIfExists(path string) (resolved string, exists bool, err error) {
+	resolved, err = filepath.EvalSymlinks(path)
+
+	if err == nil {
+		return resolved, true, nil
+	}
+
+	if errors.Is(err, fs.ErrNotExist) {
+		return path, false, nil
+	}
+
+	return "", false, err
 }
