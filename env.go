@@ -57,3 +57,37 @@ func EnvGetIntOrPanic(key string) int {
 
 	return i
 }
+
+func EnvBool(key string) bool {
+	value, ok := os.LookupEnv(key)
+
+	if !ok {
+		return false
+	}
+
+	b, err := strconv.ParseBool(value)
+
+	if err != nil {
+		return false
+	}
+
+	return b
+}
+
+// EnvBoolChecked returns (_, false) if the env var is not set,
+// or cannot be parsed.
+func EnvBoolChecked(key string) (bool, bool) {
+	value, ok := os.LookupEnv(key)
+
+	if !ok {
+		return false, false
+	}
+
+	b, err := strconv.ParseBool(value)
+
+	if err != nil {
+		return false, false
+	}
+
+	return b, true
+}
