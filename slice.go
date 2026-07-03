@@ -46,3 +46,25 @@ func Filter[T any](input []T, isPermitted func(T) bool) []T {
 
 	return output
 }
+
+func Split[T any](slice []T, inLeft func(T) bool) (left, right []T) {
+	left = make([]T, 0, len(slice))
+	right = make([]T, 0, len(slice))
+	for _, v := range slice {
+		if inLeft(v) {
+			left = append(left, v)
+		} else {
+			right = append(right, v)
+		}
+	}
+	return
+}
+
+func GroupBy[T any, K comparable](slice []T, property func(T) K) map[K][]T {
+	result := make(map[K][]T)
+	for _, v := range slice {
+		key := property(v)
+		result[key] = append(result[key], v)
+	}
+	return result
+}

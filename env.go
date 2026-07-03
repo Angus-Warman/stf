@@ -6,7 +6,17 @@ import (
 	"strconv"
 )
 
-func EnvGetOrDefault(key, defaultVal string) string {
+func EnvString(key string) (string, error) {
+	value, ok := os.LookupEnv(key)
+
+	if !ok {
+		return "", fmt.Errorf("env var %s not set", key)
+	}
+
+	return value, nil
+}
+
+func EnvStringOrDefault(key, defaultVal string) string {
 	value, ok := os.LookupEnv(key)
 
 	if ok {
@@ -16,7 +26,7 @@ func EnvGetOrDefault(key, defaultVal string) string {
 	return defaultVal
 }
 
-func EnvGetOrPanic(key string) string {
+func EnvStringOrPanic(key string) string {
 	value, ok := os.LookupEnv(key)
 
 	if !ok {
@@ -26,14 +36,24 @@ func EnvGetOrPanic(key string) string {
 	return value
 }
 
-func EnvGetInt(key string, defaultVal int) int {
+func EnvInt(key string) (int, error) {
 	value, ok := os.LookupEnv(key)
 
 	if !ok {
-		return defaultVal
+		return 0, fmt.Errorf("env var %s not set", key)
 	}
 
 	i, err := strconv.Atoi(value)
+
+	if err != nil {
+		return 0, fmt.Errorf("env var %s %q could not be parsed", key, value)
+	}
+
+	return i, nil
+}
+
+func EnvIntOrDefault(key string, defaultVal int) int {
+	i, err := EnvInt(key)
 
 	if err != nil {
 		return defaultVal
@@ -42,17 +62,11 @@ func EnvGetInt(key string, defaultVal int) int {
 	return i
 }
 
-func EnvGetIntOrPanic(key string) int {
-	value, ok := os.LookupEnv(key)
-
-	if !ok {
-		panic(fmt.Sprintf("required env var %s is not set", key))
-	}
-
-	i, err := strconv.Atoi(value)
+func EnvIntOrPanic(key string) int {
+	i, err := EnvInt(key)
 
 	if err != nil {
-		panic(fmt.Sprintf("env var %s is not a valid int: %s", key, value))
+		panic(err)
 	}
 
 	return i
