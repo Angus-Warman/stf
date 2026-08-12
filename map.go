@@ -2,7 +2,7 @@ package stf
 
 import "fmt"
 
-func Keys[K comparable, V any](target map[K]V) []K {
+func MapKeys[K comparable, V any](target map[K]V) []K {
 	keys := make([]K, 0, len(target))
 
 	for k := range target {
@@ -12,7 +12,7 @@ func Keys[K comparable, V any](target map[K]V) []K {
 	return keys
 }
 
-func Values[K comparable, V any](target map[K]V) []V {
+func MapValues[K comparable, V any](target map[K]V) []V {
 	vals := make([]V, 0, len(target))
 
 	for _, v := range target {
@@ -22,7 +22,7 @@ func Values[K comparable, V any](target map[K]V) []V {
 	return vals
 }
 
-func KeysAndValues[K comparable, V any](target map[K]V) ([]K, []V) {
+func MapKeysAndValues[K comparable, V any](target map[K]V) ([]K, []V) {
 	keys := make([]K, 0, len(target))
 	vals := make([]V, 0, len(target))
 
@@ -34,7 +34,7 @@ func KeysAndValues[K comparable, V any](target map[K]V) ([]K, []V) {
 	return keys, vals
 }
 
-func GetOrDefault[K comparable, V any](target map[K]V, key K, defaultVal V) V {
+func MapGetOrDefault[K comparable, V any](target map[K]V, key K, defaultVal V) V {
 	value, ok := target[key]
 
 	if ok {
@@ -44,7 +44,7 @@ func GetOrDefault[K comparable, V any](target map[K]V, key K, defaultVal V) V {
 	return defaultVal
 }
 
-func GetKey[K comparable, V comparable](target map[K]V, value V) (K, bool) {
+func MapGetKeyFromValue[K comparable, V comparable](target map[K]V, value V) (K, bool) {
 	for k, v := range target {
 		if v == value {
 			return k, true
@@ -54,7 +54,7 @@ func GetKey[K comparable, V comparable](target map[K]V, value V) (K, bool) {
 	return zero, false
 }
 
-func GetOrErr[K comparable, V any](target map[K]V, key K) (V, error) {
+func MapGetOrErr[K comparable, V any](target map[K]V, key K) (V, error) {
 	value, ok := target[key]
 
 	if ok {

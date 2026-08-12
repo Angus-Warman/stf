@@ -6,17 +6,7 @@ import (
 	"strconv"
 )
 
-func EnvString(key string) (string, error) {
-	value, ok := os.LookupEnv(key)
-
-	if !ok {
-		return "", fmt.Errorf("env var %s not set", key)
-	}
-
-	return value, nil
-}
-
-func EnvStringOrDefault(key, defaultVal string) string {
+func EnvString(key, defaultVal string) string {
 	value, ok := os.LookupEnv(key)
 
 	if ok {
@@ -36,42 +26,71 @@ func EnvStringOrPanic(key string) string {
 	return value
 }
 
-func EnvInt(key string) (int, error) {
-	value, ok := os.LookupEnv(key)
+func EnvInt(key string, defaultVal int) int {
+	raw, ok := os.LookupEnv(key)
 
 	if !ok {
-		return 0, fmt.Errorf("env var %s not set", key)
+		return defaultVal
 	}
 
-	i, err := strconv.Atoi(value)
-
-	if err != nil {
-		return 0, fmt.Errorf("env var %s %q could not be parsed", key, value)
-	}
-
-	return i, nil
-}
-
-func EnvIntOrDefault(key string, defaultVal int) int {
-	i, err := EnvInt(key)
+	value, err := strconv.Atoi(raw)
 
 	if err != nil {
 		return defaultVal
 	}
 
-	return i
+	return value
 }
 
 func EnvIntOrPanic(key string) int {
-	i, err := EnvInt(key)
+	raw, ok := os.LookupEnv(key)
 
-	if err != nil {
-		panic(err)
+	if !ok {
+		panic(fmt.Errorf("env var %q not set", key))
 	}
 
-	return i
+	value, err := strconv.Atoi(raw)
+
+	if err != nil {
+		panic(fmt.Errorf("could not parse %q as int", raw))
+	}
+
+	return value
 }
 
+func EnvFloat(key string, defaultVal float64) float64 {
+	raw, ok := os.LookupEnv(key)
+
+	if !ok {
+		return defaultVal
+	}
+
+	value, err := strconv.ParseFloat(raw, 64)
+
+	if err != nil {
+		return defaultVal
+	}
+
+	return value
+}
+
+func EnvFloatOrPanic(key string) float64 {
+	raw, ok := os.LookupEnv(key)
+
+	if !ok {
+		panic(fmt.Errorf("env var %q not set", key))
+	}
+
+	value, err := strconv.ParseFloat(raw, 64)
+
+	if err != nil {
+		panic(fmt.Errorf("could not parse %q as float", raw))
+	}
+
+	return value
+}
+
+// Default false
 func EnvBool(key string) bool {
 	value, ok := os.LookupEnv(key)
 
@@ -91,17 +110,17 @@ func EnvBool(key string) bool {
 // EnvBoolChecked returns (_, false) if the env var is not set,
 // or cannot be parsed.
 func EnvBoolChecked(key string) (bool, bool) {
-	value, ok := os.LookupEnv(key)
+	raw, ok := os.LookupEnv(key)
 
 	if !ok {
 		return false, false
 	}
 
-	b, err := strconv.ParseBool(value)
+	value, err := strconv.ParseBool(raw)
 
 	if err != nil {
 		return false, false
 	}
 
-	return b, true
+	return value, true
 }
