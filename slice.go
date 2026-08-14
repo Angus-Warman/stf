@@ -2,6 +2,7 @@ package stf
 
 import (
 	"errors"
+	"slices"
 )
 
 func Convert[I any, O any](input []I, converter func(I) O) []O {
@@ -69,6 +70,14 @@ func All[T any](input []T, isPermitted func(T) bool) bool {
 	}
 
 	return true
+}
+
+func Any[T any](input []T, isPermitted func(T) bool) bool {
+	return slices.ContainsFunc(input, isPermitted)
+}
+
+func None[T any](input []T, isPermitted func(T) bool) bool {
+	return !slices.ContainsFunc(input, isPermitted)
 }
 
 func Split[T any](slice []T, inLeft func(T) bool) (left, right []T) {
